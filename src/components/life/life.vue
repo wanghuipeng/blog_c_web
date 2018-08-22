@@ -7,7 +7,7 @@
       <!-- 生活类文章列表 -->
       <p class="title-bar">生活专栏</p>
       <ul class="blogList">
-        <li v-for="(item,index) in blogList" :key="index" @click="toDetail(item.id)">
+        <li v-for="(item,index) in blogList" :key="index" @click="toDetail(item.id)" v-loading="loading">
           <div class="title">{{item.title}}</div>
           <div class="cont">{{item.content}}</div>
           <div class="footer">
@@ -17,6 +17,15 @@
           </div>
         </li>
       </ul>
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="page"
+        :page-size="pageNum"
+        layout="total, prev, pager, jumper"
+        :total="total">
+      </el-pagination>
     </div>
     <div class="right">
        占位
@@ -30,6 +39,7 @@ import { allBlogs } from '@/assets/js/api.js'
 export default {
   data () {
     return {
+      loading: true,
       pageNum: 10,
       page: 1,
       total: 0,
@@ -51,7 +61,9 @@ export default {
         .then(res => {
           let data = res.data
           if (res.status === 1) {
+            this.loading = false
             this.blogList = data.list
+            this.total = data.count
           } else {
             this.$notify({ title: res.msg, type: 'error', duration: 1000 })
           }
@@ -62,6 +74,17 @@ export default {
     },
     toDetail (id) {
       this.$router.push({name: 'blogDetail', query: {blogId: id}})
+    },
+    // 分页
+    handleSizeChange (val) {
+      this.pageNum = val
+      this.loading = true
+      this.allBlogs()
+    },
+    handleCurrentChange (val) {
+      this.page = val
+      this.loading = true
+      this.allBlogs()
     }
   }
 }

@@ -104,3 +104,8 @@ export const allBlogs = params => {
 export const detailBlog = params => {
     return getAxios('get', '/detailBlog', params).then(res => res.data)
 }
+
+// 首页轮播图
+export const carousel = params => {
+    return getAxios('get', '/carousel', params).then(res => res.data)
+}

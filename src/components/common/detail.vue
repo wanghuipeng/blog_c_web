@@ -5,13 +5,13 @@
                 <img :src="avatar">
             </div>
             <div class="right">
-                <p class="author"><span class="green">{{detail.author}}</span><span class="middile-text">发表于</span><span class="green" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value">{{item.label}}</span>专栏</p>
+                <p class="author"><span class="green">{{detail.author}}</span><span class="middile-text">发表于</span><span class="green pointer" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value" @click="link(item.value)">{{item.label}}</span>专栏</p>
                 <p class="tip">{{detail.updateTime ? detail.updateTime : detail.createTime }}<span class="circle"></span>{{detail.pv}}次阅读</p>
             </div>
        </div>
        <div class="title">{{detail.title}}</div>
        <div class="medal">
-           <span class="yuan">原</span><span class="label" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value">{{item.label}}</span>
+           <span class="yuan">原</span><span class="label pointer" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value" @click="link(item.value)">{{item.label}}</span>
        </div>
        <div class="cont">{{detail.content}}</div>
   </div>
@@ -66,6 +66,26 @@ export default {
         .catch(res => {
           this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
         })
+    },
+    link (id) {
+      console.log(id)
+      switch (id) {
+        case 'type_1':
+          this.linkTo('technology', 'type_1')
+          break
+        case 'type_2':
+          this.linkTo('life', 'type_2')
+          break
+        case 'type_3':
+          this.linkTo('thoughts', 'type_3')
+          break
+        case 'type_4':
+          this.linkTo('memo', 'type_4')
+          break
+      }
+    },
+    linkTo (name, id) {
+      this.$router.push({name, query: {typeId: id}})
     }
   }
 }
@@ -73,6 +93,8 @@ export default {
 
 <style scoped lang='less'>
 .detail {
+  width: 850px;
+  margin: 0 auto;
   .medal {
     text-align: left;
     .yuan {
@@ -91,7 +113,7 @@ export default {
         font-weight: normal;
         font-size: 13px;
         text-align: center;
-        margin-left: 5px;
+        margin-left: 10px;
     }
   }
   .tip{
@@ -124,9 +146,10 @@ export default {
   .cont {
     font-size: 15px;
     color: #333;
-    margin-top: 40px;
     text-align: left;
     line-height: 28px;
+    margin: 40px auto;
+    word-wrap: break-word;
   }
 }
 </style>
