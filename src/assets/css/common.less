@@ -5,6 +5,10 @@ p,li,ul{
 ul,li{
     list-style: none;
 }
+a{
+    text-decoration: none;
+    color: initial;
+}
 .clearfix{
     &:after{
         content:"";
@@ -41,6 +45,9 @@ ul,li{
 }
 .pr-10{
     padding-right: 10px;
+}
+.ml-5{
+    margin-left: 5px;
 }
 .mr-0{
     margin-right: 0 !important;
@@ -197,4 +204,68 @@ ul,li{
       height: 10px;
       border-radius: 10px;
     }
+  }
+  .blogList {
+    padding: 15px 0;
+    li {
+      width: 660px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      .left {
+        width: 610px !important;
+      }
+      .right {
+        text-align: right;
+      }
+      cursor: pointer;
+      margin-top: 40px;
+      text-align: left;
+      display: flex;
+      img {
+        height: 80px;
+        width: auto;
+      }
+      &:nth-child(1) {
+        margin-top: 10px;
+      }
+      &:first-child {
+        margin-top: 10px;
+      }
+      .title {
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 20px;
+      }
+      .from{
+        color: #9E9E9E;
+        margin-bottom: 10px;
+      }
+      .cont {
+        margin: 10px 0;
+        font-size: 14px;
+        color: #888;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+      .author {
+        font-size: 12px;
+        color: #888;
+      }
+      .time {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+  .home{
+      .left{
+          width: 170px;
+      }
+      .right{
+          width: 255px;
+      }
   }

@@ -81,8 +81,7 @@ const getAxios = (method, url, params) => {
 
 // 后台接口配置
 const config = {
-    avatar: 'avatar-backend',
-    avatar_mock: 'https://easy-mock.com/mock/5af2adfe086dd715d58ab87a/avatar-backend'
+    temp: 'http://127.0.0.1:3000'
 }
 
 //设置响应数据为文件流
@@ -97,15 +96,30 @@ export const instance1 = axios.create({
 
 // 首页
 export const allBlogs = params => {
-    return getAxios('get', '/allBlogs', params).then(res => res.data)
+    return getAxios('get', '/api/allBlogs', params).then(res => res.data)
 }
 
 // 博客详情
 export const detailBlog = params => {
-    return getAxios('get', '/detailBlog', params).then(res => res.data)
+    return getAxios('get', '/api/detailBlog', params).then(res => res.data)
 }
 
 // 首页轮播图
 export const carousel = params => {
-    return getAxios('get', '/carousel', params).then(res => res.data)
+    return getAxios('get', '/api/carousel', params).then(res => res.data)
+}
+
+// 前端（爬虫）
+export const frontEndBlog = params => {
+    return getAxios('get', '/api/frontEndBlog', params).then(res => res.data)
+}
+
+// 后端（爬虫）
+export const backEndBlog = params => {
+    return getAxios('get', '/api/backEndBlog', params).then(res => res.data)
+}
+
+// 区块链（爬虫）
+export const chainBlog = params => {
+    return getAxios('get', '/api/chainBlog', params).then(res => res.data)
 }

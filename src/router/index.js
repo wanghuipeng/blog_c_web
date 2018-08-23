@@ -9,13 +9,16 @@ import life from '@/components/life/life'
 import thoughts from '@/components/thoughts/thoughts'
 import memo from '@/components/memo/memo'
 import blogDetail from '@/components/common/detail'
+import frontEnd from '@/components/frontEnd/frontEnd'
+import backEnd from '@/components/backEnd/backEnd'
+import chain from '@/components/chain/chain'
+
 Vue.use(Router)
 
 export default new Router({
     routes: [{
             path: '/',
-            name: 'home',
-            component: home
+            redirect: '/index'
         },
         {
             path: '/home',
@@ -57,6 +60,24 @@ export default new Router({
                     path: '/memo',
                     name: 'memo',
                     component: memo
+                },
+                // 前端
+                {
+                    path: '/frontEnd',
+                    name: 'frontEnd',
+                    component: frontEnd
+                },
+                // 后端
+                {
+                    path: '/backEnd',
+                    name: 'backEnd',
+                    component: backEnd
+                },
+                // 区块链
+                {
+                    path: '/chain',
+                    name: 'chain',
+                    component: chain
                 }
             ]
         },

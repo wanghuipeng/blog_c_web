@@ -62,8 +62,10 @@ export default {
     .logo{
       position: absolute;
       z-index: 10;
-      font-size: 24px;
-      top: 16px;
+      font-size: 28px;
+      top: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
     .el-menu-demo{
       padding-left: 100px;

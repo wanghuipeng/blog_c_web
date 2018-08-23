@@ -1,19 +1,23 @@
 <template>
   <div class="thoughts">
-    <div class="left">
-      占位
-    </div>
+    <left-block />
     <div class="middle">
       <!-- 感想类文章列表 -->
       <p class="title-bar">感想专栏</p>
       <ul class="blogList">
         <li v-for="(item,index) in blogList" :key="index" @click="toDetail(item.id)" v-loading="loading">
-          <div class="title">{{item.title}}</div>
-          <div class="cont">{{item.content}}</div>
-          <div class="footer">
-            <span class="author">{{item.author}}</span>
-            <span class="circle"></span>
-            <span class="time">{{item.updateTime ? item.updateTime : item.createTime}}</span>
+          <div class="left">
+            <div class="from">来自作者<span class="ml-5">{{item.author}}</span></div>
+            <div class="title">{{item.title}}</div>
+            <div class="cont">{{item.content}}</div>
+            <div class="footer">
+              <span class="author">{{item.author}}</span>
+              <span class="circle"></span>
+              <span class="time">{{item.updateTime ? item.updateTime : item.createTime}}</span>
+            </div>
+          </div>
+          <div class="right">
+            <img :src="item.thumbnail" />
           </div>
         </li>
       </ul>
@@ -34,9 +38,11 @@
 </template>
 
 <script>
+import leftBlock from '@/components/common/leftBlock'
 import { allBlogs } from '@/assets/js/api.js'
 
 export default {
+  components: { leftBlock },
   data () {
     return {
       loading: true,
@@ -95,13 +101,8 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  .left,
-  .right {
-    width: 170px;
-    height: 100px;
-  }
   .middle {
-    width: 760px;
+    width: 660px;
     .title-bar {
       font-size: 16px;
       height: 20px;
@@ -112,40 +113,6 @@ export default {
     }
     .block {
       background-color: #e9eef3;
-    }
-    .blogList {
-      padding: 15px 0;
-      li {
-        cursor: pointer;
-        margin-top: 40px;
-        text-align: left;
-        &:first-child {
-          margin-top: 10px;
-        }
-        .title {
-          font-weight: 500;
-          font-size: 18px;
-          line-height: 20px;
-        }
-        .cont {
-          margin: 10px 0;
-          font-size: 14px;
-          color: #888;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-        }
-        .author {
-          font-size: 12px;
-          color: #888;
-        }
-        .time {
-          font-size: 12px;
-          color: #999;
-        }
-      }
     }
   }
 }

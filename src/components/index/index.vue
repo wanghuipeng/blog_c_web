@@ -1,12 +1,10 @@
 <template>
   <div class="index">
-    <div class="left">
-      占位
-    </div>
+    <left-block />
     <div class="middle">
       <!-- 轮播 -->
       <div class="block">
-        <el-carousel height="150px" :interval="5000" arrow="never">
+        <el-carousel height="150px" :interval="3000" arrow="never">
           <el-carousel-item v-for="(item,index) in carouselImg" :key="index">
             <h3 class="title">{{item.title}}</h3>
             <div class="img" :style="{backgroundImage: 'url(' + item.thumbnail + ')', backgroundSize:'cover'}"  @click="toDetail(item.id)"></div>
@@ -18,6 +16,7 @@
       <ul class="blogList">
         <li v-for="(item,index) in blogList" :key="index" @click="toDetail(item.id)" v-loading="loading">
           <div class="left">
+            <div class="from">来自作者<span class="ml-5">{{item.author}}</span></div>
             <div class="title">{{item.title}}</div>
             <div class="cont">{{item.content}}</div>
             <div class="footer">
@@ -41,16 +40,17 @@
         :total="total">
       </el-pagination>
     </div>
-    <div class="right">
-       占位
-    </div>
+    <right-block />
   </div>
 </template>
 
 <script>
+import leftBlock from '@/components/common/leftBlock'
+import rightBlock from '@/components/common/rightBlock'
 import { allBlogs, carousel } from '@/assets/js/api.js'
 
 export default {
+  components: { leftBlock, rightBlock },
   data () {
     return {
       loading: true,
@@ -59,6 +59,7 @@ export default {
       total: 0,
       blogList: [],
       carouselImg: []
+
     }
   },
   created () {
@@ -66,6 +67,7 @@ export default {
     this.allBlogs()
   },
   methods: {
+
     carousel () {
       carousel()
         .then(res => {
@@ -125,13 +127,8 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  .left,
-  .right {
-    width: 170px;
-    height: 100px;
-  }
   .middle {
-    width: 760px;
+    width: 660px;
     .title-bar {
       font-size: 16px;
       height: 20px;
@@ -143,57 +140,6 @@ export default {
     }
     .block {
       background-color: #e9eef3;
-    }
-    .blogList {
-      padding: 15px 0;
-      li {
-        .left {
-          width: 610px;
-        }
-        .right {
-          text-align: right;
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-        }
-        cursor: pointer;
-        margin-top: 40px;
-        text-align: left;
-        display: flex;
-        img {
-          height: 80px;
-          width: auto;
-        }
-        &:nth-child(1) {
-          margin-top: 10px;
-        }
-        &:first-child {
-          margin-top: 10px;
-        }
-        .title {
-          font-weight: 500;
-          font-size: 18px;
-          line-height: 20px;
-        }
-        .cont {
-          margin: 10px 0;
-          font-size: 14px;
-          color: #888;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-        }
-        .author {
-          font-size: 12px;
-          color: #888;
-        }
-        .time {
-          font-size: 12px;
-          color: #999;
-        }
-      }
     }
   }
 }
