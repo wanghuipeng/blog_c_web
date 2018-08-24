@@ -12,6 +12,7 @@ import blogDetail from '@/components/common/detail'
 import frontEnd from '@/components/frontEnd/frontEnd'
 import backEnd from '@/components/backEnd/backEnd'
 import chain from '@/components/chain/chain'
+import search from '@/components/common/search'
 
 Vue.use(Router)
 
@@ -78,6 +79,12 @@ export default new Router({
                     path: '/chain',
                     name: 'chain',
                     component: chain
+                },
+                // 搜索结果页
+                {
+                    path: '/search',
+                    name: 'search',
+                    component: search
                 }
             ]
         },

@@ -123,3 +123,23 @@ export const backEndBlog = params => {
 export const chainBlog = params => {
     return getAxios('get', '/api/chainBlog', params).then(res => res.data)
 }
+
+// 活动推荐（爬虫）
+export const activities = params => {
+    return getAxios('get', '/api/activities', params).then(res => res.data)
+}
+
+// 搜索
+export const searchKeyword = params => {
+    return getAxios('post', '/api/searchKeyword', params).then(res => res.data)
+}
+
+// 登录
+export const loginC = params => {
+    return getAxios('post', '/api/loginC', params).then(res => res.data)
+}
+
+// 注册
+export const registC = params => {
+    return getAxios('post', '/api/registC', params).then(res => res.data)
+}

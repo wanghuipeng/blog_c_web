@@ -32,6 +32,7 @@ export default {
   position: relative;
   min-height: 100%;
   .el-main {
+    min-height: 600px;
     color: #333;
     text-align: center;
     width: 1140px;

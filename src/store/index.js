@@ -7,9 +7,7 @@ import getters from './getters'
 Vue.use(Vuex)
 
 const state = {
-    isLoading: true, //表格loading状态
-    activeTabName: '', //标签页名称
-    isExport: false //是否触发excel导出的标识
+    keyword: '', //搜索关键字
 }
 
 export default new Vuex.Store({

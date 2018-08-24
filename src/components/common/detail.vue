@@ -127,6 +127,7 @@ export default {
   .head {
     display: flex;
     .left {
+      width: auto;
       img {
         border-radius: 100%;
         width: 40px;

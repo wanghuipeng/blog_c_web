@@ -214,6 +214,7 @@ a{
       align-items: center;
       .left {
         width: 610px !important;
+        word-break: break-all;
       }
       .right {
         text-align: right;
@@ -223,8 +224,9 @@ a{
       text-align: left;
       display: flex;
       img {
-        height: 80px;
-        width: auto;
+        height: 60px;
+        width: 80px;
+        border-radius: 4px;
       }
       &:nth-child(1) {
         margin-top: 10px;
@@ -267,5 +269,15 @@ a{
       }
       .right{
           width: 255px;
+      }
+      .el-dialog{
+        border-radius: 6px;
+        transform: translate3d(0, 0, 0);
+        .el-dialog__header{
+          background-color: #f3f3f3;
+          overflow: hidden;
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+       }
       }
   }

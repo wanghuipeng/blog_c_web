@@ -1,14 +1,14 @@
 <template>
-  <div class="thoughts">
+  <div class="searchBlock">
     <left-block />
     <div class="middle">
-      <!-- 感想类文章列表 -->
-      <p class="title-bar">感想专栏</p>
+      <!-- 生活类文章列表 -->
+      <p class="result-bar">找到约 <span class="green">{{total}}</span> 条结果</p>
       <ul class="blogList">
         <li v-for="(item,index) in blogList" :key="index" @click="toDetail(item.id)" v-loading="loading">
           <div class="left">
             <div class="from">来自作者<span class="ml-5">{{item.author}}</span></div>
-            <div class="title">{{item.title}}</div>
+            <div class="title">{{item.title.substring(0,item.title.indexOf(keyword))}}<strong style="color:#D0021B;">{{keyword}}</strong>{{item.title.substring(item.title.indexOf(keyword)+keyword.length,item.title.length)}}</div>
             <div class="cont">{{item.content}}</div>
             <div class="footer">
               <span class="author">{{item.author}}</span>
@@ -38,10 +38,15 @@
 <script>
 import leftBlock from '@/components/common/leftBlock'
 import rightBlock from '@/components/common/rightBlock'
-import { allBlogs } from '@/assets/js/api.js'
+import { searchKeyword } from '@/assets/js/api.js'
 
 export default {
   components: { leftBlock, rightBlock },
+  computed: {
+    keyword: function () {
+      return this.$route.query.keyword
+    }
+  },
   data () {
     return {
       loading: true,
@@ -51,34 +56,32 @@ export default {
       blogList: []
     }
   },
-  created () {
-    this.allBlogs()
+  mounted () {
+    this.searchKeyword()
   },
   methods: {
-    allBlogs () {
-      let { pageNum, page } = this
+    searchKeyword () {
+      let { pageNum, page, keyword } = this
       let params = {
         pageNum,
         page,
-        type: this.$route.query.typeId
+        keyword
       }
-      allBlogs(params)
-        .then(res => {
-          let data = res.data
-          if (res.status === 1) {
-            this.loading = false
-            this.blogList = data.list
-            this.total = data.count
-          } else {
-            this.$notify({ title: res.msg, type: 'error', duration: 1000 })
-          }
-        })
-        .catch(res => {
-          this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
-        })
+      searchKeyword(params).then(res => {
+        let data = res.data
+        if (res.status === 1) {
+          this.loading = false
+          this.blogList = data.list
+          this.total = data.count
+        } else {
+          this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+        }
+      }).catch(res => {
+        this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+      })
     },
     toDetail (id) {
-      this.$router.push({name: 'blogDetail', query: {blogId: id}})
+      this.$router.push({ name: 'blogDetail', query: { blogId: id } })
     },
     // 分页
     handleSizeChange (val) {
@@ -89,26 +92,37 @@ export default {
     handleCurrentChange (val) {
       this.page = val
       this.loading = true
-      this.allBlogs()
+      this.searchKeyword()
+    }
+  },
+  watch: {
+    keyword (curVal, oldVal) {
+      if (curVal !== oldVal) {
+        this.page = 1
+        this.searchKeyword()
+      }
     }
   }
 }
 </script>
 
 <style scoped lang='less'>
-.thoughts {
+.searchBlock {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   .middle {
     width: 660px;
-    .title-bar {
-      font-size: 16px;
+    .result-bar {
+      color: #757575;
       height: 20px;
       line-height: 20px;
       text-align: left;
       border-bottom: 1px solid #ddd;
       padding-bottom: 5px;
+      .green{
+          font-weight: 600;
+      }
     }
     .block {
       background-color: #e9eef3;

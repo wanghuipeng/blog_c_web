@@ -22,18 +22,17 @@
         </a>
       </ul>
     </div>
-    <div class="right">
-       占位
-    </div>
+    <right-block />
   </div>
 </template>
 
 <script>
 import leftBlock from '@/components/common/leftBlock'
+import rightBlock from '@/components/common/rightBlock'
 import { chainBlog } from '@/assets/js/api.js'
 
 export default {
-  components: { leftBlock },
+  components: { leftBlock, rightBlock },
   data () {
     return {
       loading: true,

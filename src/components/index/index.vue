@@ -104,7 +104,6 @@ export default {
         })
     },
     toDetail (id) {
-      console.log(id)
       this.$router.push({ name: 'blogDetail', query: { blogId: id } })
     },
     // 分页
