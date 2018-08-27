@@ -67,7 +67,6 @@ export default {
     this.allBlogs()
   },
   methods: {
-
     carousel () {
       carousel()
         .then(res => {

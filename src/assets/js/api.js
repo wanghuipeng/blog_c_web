@@ -12,7 +12,7 @@ axios.interceptors.request.use(function(request) {
     // 判断本地是否有token值，有则从新设置token，没有使用token默认配置
     let moveToken = sessionStorage.getItem('token')
     if (moveToken) {
-        request.headers.Authorization = `bearer ${moveToken}`
+        request.headers.Authorization = `${moveToken}`
     };
     return request
 }, function(error) {
@@ -142,4 +142,14 @@ export const loginC = params => {
 // 注册
 export const registC = params => {
     return getAxios('post', '/api/registC', params).then(res => res.data)
+}
+
+// 用户信息
+export const getUserInfoC = params => {
+    return getAxios('get', '/api/getUserInfoC', params).then(res => res.data)
+}
+
+// 退出
+export const logoutC = params => {
+    return getAxios('get', '/api/logoutC', params).then(res => res.data)
 }

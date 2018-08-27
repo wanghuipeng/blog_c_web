@@ -14,12 +14,20 @@
       <el-button slot="append" icon="el-icon-search" @click="searchKeyword"></el-button>
     </el-input>
     <div class="header-user">
-      <el-button type="text" class="login" @click="loginDialog" size="small">立即登录</el-button>
-      <el-button type="primary" class="regist" @click="registDialog" size="small">免费注册</el-button>
-      <div v-if="false">
-        <span class="message"></span>
-        <img src="https://static.segmentfault.com/v-5b7544bd/global/img/user-64.png" alt="">
-      </div>
+      <el-dropdown @command="handleCommand">
+        <span class="el-dropdown-link">
+          <template v-if="!moveToken">
+            <el-button type="text" class="login" @click="loginDialog" size="small">立即登录</el-button>
+            <el-button type="primary" class="regist" @click="registDialog" size="small">免费注册</el-button>
+          </template>
+          <div v-else class="user">
+            <img src="../../assets/img/avatar.png" alt="" :title="userName" />
+          </div>
+        </span>
+        <el-dropdown-menu slot="dropdown" v-if="moveToken">
+          <el-dropdown-item command="quit">退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     </div>
   </el-header>
@@ -32,11 +40,11 @@
         <el-input v-model="loginForm.account" placeholder="11位手机号或Email"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="loginForm.password" placeholder="请输入密码"></el-input>
+        <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="login">登录</el-button>
-        <el-button>注册新账号</el-button>
+        <el-button @click="registDialog">注册新账号</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -52,11 +60,11 @@
         <el-input v-model="registForm.account" placeholder="11位手机号或Email"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="registForm.password" placeholder="不少于6位的密码"></el-input>
+        <el-input type="password" v-model="registForm.password" placeholder="不少于6位的密码"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="regist">注册</el-button>
-        <el-button>已有账号登录</el-button>
+        <el-button @click="loginDialog">已有账号登录</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -64,7 +72,7 @@
 </template>
 
 <script>
-import { registC, loginC } from '@/assets/js/api.js'
+import { registC, loginC, getUserInfoC, logoutC } from '@/assets/js/api.js'
 
 export default {
   data () {
@@ -81,11 +89,44 @@ export default {
         name: '',
         account: '',
         password: ''
-      }
+      },
+      userName: '',
+      moveToken: ''
     }
   },
-  mounted () {},
+  created () {
+    this.moveToken = sessionStorage.getItem('token')
+  },
   methods: {
+    async handleCommand (command) {
+      if (command === 'quit') {
+        await logoutC().then(res => {
+          if (res.status === 1) {
+            this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+            sessionStorage.clear()
+            this.moveToken = ''
+          } else {
+            this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+          }
+        }).catch(res => {
+          this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+        })
+      }
+    },
+    async getUserInfoC () {
+      await getUserInfoC().then(res => {
+        let data = res.data
+        if (res.status === 1) {
+          this.userName = data.userName
+          sessionStorage.setItem('userStatus', data.userStatus)
+          this.moveToken = sessionStorage.getItem('token')
+        } else {
+          this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+        }
+      }).catch(res => {
+        this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+      })
+    },
     handleSelect (e) {
       switch (e) {
         case '1':
@@ -115,8 +156,12 @@ export default {
       let { keyword } = this
       this.$router.push({name: 'search', query: {keyword}})
     },
-    loginDialog () {},
+    loginDialog () {
+      this.registDialogVisible = false
+      this.loginDialogVisible = true
+    },
     registDialog () {
+      this.loginDialogVisible = false
       this.registDialogVisible = true
     },
     regist () {
@@ -145,7 +190,11 @@ export default {
       }
       loginC(params).then(res => {
         if (res.status === 1) {
+          sessionStorage.setItem('token', res.token)
+
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+          this.loginDialogVisible = false
+          this.getUserInfoC()
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
         }
@@ -172,6 +221,11 @@ export default {
       color: #009a61;
       font-size: 14px;
       margin-right: 10px;
+      padding: 9px 15px;
+      margin-right: 0;
+      &:hover,&:active{
+        background-color: #F3F3F3;
+      }
     }
     .regist{
       font-size: 14px;
@@ -212,6 +266,20 @@ export default {
           color: #009a61;
         }
       }
+    }
+  }
+  .user{
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    align-items: center;
+    color: #999;
+    img{
+      border-radius: 34px;
+      width: 34px;
+      height: 34px;
+      margin-left: 10px;
     }
   }
 }

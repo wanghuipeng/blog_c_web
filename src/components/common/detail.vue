@@ -14,6 +14,19 @@
            <span class="yuan">原</span><span class="label pointer" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value" @click="link(item.value)">{{item.label}}</span>
        </div>
        <div class="cont">{{detail.content}}</div>
+       <div class="remak">
+         <p class="remark-title">{{count}}条评论</p>
+         <ul class="remark-list">
+           <li></li>
+         </ul>
+         <div class="write">
+           <img src="../../assets/img/avatar.png" />
+           <div class="textarea">
+              <textarea placeholder="文明社会，理性评论" :model="remakText" rows="6" />
+              <el-button type="primary" @click="remarkBtn" size="small">发布评论</el-button>
+           </div>
+         </div>
+       </div>
   </div>
 </template>
 
@@ -42,7 +55,9 @@ export default {
           label: '备忘',
           value: 'type_4'
         }
-      ]
+      ],
+      remakText: '',
+      count: 0
     }
   },
   created () {
@@ -86,6 +101,9 @@ export default {
     },
     linkTo (name, id) {
       this.$router.push({name, query: {typeId: id}})
+    },
+    remarkBtn () {
+
     }
   }
 }
@@ -151,6 +169,39 @@ export default {
     line-height: 28px;
     margin: 40px auto;
     word-wrap: break-word;
+  }
+  .remak{
+    .remark-title{
+      text-align: left;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .write{
+      display: flex;
+      padding: 15px 0;
+      border-top: 1px solid rgba(0,0,0,0.09);
+      img{
+        width: 32px;
+        height: 32px;
+        border-radius: 32px;
+      }
+      .textarea{
+        padding-left: 20px;
+        text-align: right;
+        width: 100%;
+        button{
+          margin-top: 10px;
+        }
+        textarea{
+          width: 100%;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          padding: 10px;
+        }
+      }
+    }
   }
 }
 </style>
