@@ -14,18 +14,16 @@
       <el-button slot="append" icon="el-icon-search" @click="searchKeyword"></el-button>
     </el-input>
     <div class="header-user">
-      <el-dropdown @command="handleCommand">
-        <span class="el-dropdown-link">
-          <template v-if="!moveToken">
-            <el-button type="text" class="login" @click="loginDialog" size="small">立即登录</el-button>
-            <el-button type="primary" class="regist" @click="registDialog" size="small">免费注册</el-button>
-          </template>
-          <div v-else class="user">
-            <img src="../../assets/img/avatar.png" alt="" :title="userName" />
-          </div>
-        </span>
-        <el-dropdown-menu slot="dropdown" v-if="moveToken">
-          <el-dropdown-item command="quit">退出</el-dropdown-item>
+      <template v-if="!moveToken">
+        <el-button type="text" class="login" @click="loginDialog" size="small">立即登录</el-button>
+        <el-button type="primary" class="regist" @click="registDialog" size="small">免费注册</el-button>
+      </template>
+      <el-dropdown @command="handleCommand" v-else>
+        <div class="el-dropdown-link">
+          <img src="../../assets/img/avatar.png" alt="" :title="userName" />
+        </div>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="quit" v-if="moveToken">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -33,6 +31,7 @@
   </el-header>
   <el-dialog
     title="登录"
+    :before-close="closeLogin"
     :visible.sync="loginDialogVisible"
     width="600px">
     <el-form ref="loginForm" :model="loginForm" label-width="110px" size="small">
@@ -50,6 +49,7 @@
   </el-dialog>
   <el-dialog
     title="注册"
+    :before-close="closeRegist"
     :visible.sync="registDialogVisible"
     width="600px">
     <el-form ref="registForm" :model="registForm" label-width="110px" size="small">
@@ -73,14 +73,20 @@
 
 <script>
 import { registC, loginC, getUserInfoC, logoutC } from '@/assets/js/api.js'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
+  computed: {
+    ...mapState([
+      'loginDialogVisible',
+      'registDialogVisible',
+      'userName'
+    ])
+  },
   data () {
     return {
       activeIndex: '1',
       keyword: '',
-      registDialogVisible: false,
-      loginDialogVisible: false,
       loginForm: {
         account: '',
         password: ''
@@ -90,7 +96,6 @@ export default {
         account: '',
         password: ''
       },
-      userName: '',
       moveToken: ''
     }
   },
@@ -98,6 +103,12 @@ export default {
     this.moveToken = sessionStorage.getItem('token')
   },
   methods: {
+    ...mapMutations([
+      'setLoginDialog',
+      'setRegistDialog',
+      'setUserName',
+      'setAccount'
+    ]),
     async handleCommand (command) {
       if (command === 'quit') {
         await logoutC().then(res => {
@@ -117,9 +128,10 @@ export default {
       await getUserInfoC().then(res => {
         let data = res.data
         if (res.status === 1) {
-          this.userName = data.userName
           sessionStorage.setItem('userStatus', data.userStatus)
           this.moveToken = sessionStorage.getItem('token')
+          this.setUserName(data.userName)
+          this.setAccount(data.account)
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
         }
@@ -156,13 +168,19 @@ export default {
       let { keyword } = this
       this.$router.push({name: 'search', query: {keyword}})
     },
+    closeLogin () {
+      this.setLoginDialog(false)
+    },
+    closeRegist () {
+      this.setRegistDialog(false)
+    },
     loginDialog () {
-      this.registDialogVisible = false
-      this.loginDialogVisible = true
+      this.setRegistDialog(false)
+      this.setLoginDialog(true)
     },
     registDialog () {
-      this.loginDialogVisible = false
-      this.registDialogVisible = true
+      this.setLoginDialog(false)
+      this.setRegistDialog(true)
     },
     regist () {
       let { name, account, password } = this.registForm
@@ -173,7 +191,7 @@ export default {
       }
       registC(params).then(res => {
         if (res.status === 1) {
-          this.registDialogVisible = false
+          this.setLoginDialog(false)
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
@@ -193,7 +211,7 @@ export default {
           sessionStorage.setItem('token', res.token)
 
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
-          this.loginDialogVisible = false
+          this.setLoginDialog(false)
           this.getUserInfoC()
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
@@ -258,6 +276,7 @@ export default {
       .el-menu-item.is-active {
         border-bottom: 2px solid #009a61;
         color: #009a61;
+        font-weight: 600;
       }
       .el-menu-item{
         font-size: 16px;
@@ -268,19 +287,12 @@ export default {
       }
     }
   }
-  .user{
+  img{
     cursor: pointer;
-    display: flex;
-    justify-content: flex-end;
-    align-content: center;
-    align-items: center;
-    color: #999;
-    img{
-      border-radius: 34px;
-      width: 34px;
-      height: 34px;
-      margin-left: 10px;
-    }
+    border-radius: 34px;
+    width: 34px;
+    height: 34px;
+    margin-left: 10px;
   }
 }
 </style>

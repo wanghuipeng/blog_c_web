@@ -153,3 +153,8 @@ export const getUserInfoC = params => {
 export const logoutC = params => {
     return getAxios('get', '/api/logoutC', params).then(res => res.data)
 }
+
+// 添加评论
+export const addMark = params => {
+    return getAxios('post', '/api/addMark', params).then(res => res.data)
+}
