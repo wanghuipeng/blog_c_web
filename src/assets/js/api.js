@@ -163,3 +163,13 @@ export const addMark = params => {
 export const praiseBlog = params => {
     return getAxios('post', '/api/praiseBlog', params).then(res => res.data)
 }
+
+// 收藏文章
+export const collectBlog = params => {
+    return getAxios('post', '/api/collectBlog', params).then(res => res.data)
+}
+
+// 点赞评论
+export const premark = params => {
+    return getAxios('get', '/api/premark', params).then(res => res.data)
+}

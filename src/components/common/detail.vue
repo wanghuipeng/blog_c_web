@@ -16,14 +16,14 @@
        <div class="cont">{{detail.content}}</div>
        <div class="praise-collect">
          <p class="praise" @click="praiseClick">
-           <span v-if="praiseNum > 0">已赞</span>
+           <span v-if="praiseNum > 0 && praiseStatus">已赞</span>
            <span v-else>赞</span>
            <span>{{praiseNum}}</span>
          </p>
          <p class="collect" @click="collectClick">
-           <span v-if="collectNum > 0">已收藏</span>
+           <span v-if="collectNum > 0 && collectStatus">已收藏</span>
            <span v-else>收藏</span>
-           <span>{{collectNum}}0</span>
+           <span>{{collectNum}}</span>
          </p>
        </div>
        <div class="remak">
@@ -32,8 +32,12 @@
            <li v-for="(item,index) in remarkList" :key="index" class="item">
              <img src="../../assets/img/avatar.png" alt="">
              <div class="remarkCont">
-               <p class="top"><span class="green">{{item.name}}</span><span class="time">{{item.time | formatDate}}</span></p>
+               <p class="top"><strong class="green">{{item.name}}</strong><span class="time">{{item.time | formatDate}}</span></p>
                <p class="mid">{{item.markContent}}</p>
+               <p class="foot">
+                 <span @click="praiseRemark(item._id)"><i :class="item.premarkStatus ? 'fa fa-thumbs-up active' : 'fa fa-thumbs-up'"></i>赞</span>
+                 <span>回复</span>
+               </p>
              </div>
            </li>
          </ul>
@@ -49,7 +53,7 @@
 </template>
 
 <script>
-import { detailBlog, addMark, getUserInfoC, praiseBlog } from '@/assets/js/api.js'
+import { detailBlog, addMark, getUserInfoC, praiseBlog, collectBlog, premark } from '@/assets/js/api.js'
 import { mapState, mapMutations } from 'vuex'
 import { formatDate } from '@/assets/js/common.js'
 
@@ -90,7 +94,12 @@ export default {
       count: 0,
       remarkList: [],
       praiseNum: null,
-      collectNum: null
+      collectNum: null,
+      praiseStatus: 0,
+      collectStatus: 0,
+      praiseId: '',
+      collectId: '',
+      premarkStatus: 0
     }
   },
   created () {
@@ -107,16 +116,17 @@ export default {
       'setUserName',
       'setAccount'
     ]),
-    praiseClick () {
-      let { userName } = this
+    praiseRemark (remarkId) {
+      let { premarkStatus } = this
       let params = {
-        blogId: this.$route.query.blogId,
-        userName
+        remarkId,
+        premarkStatus
       }
-      praiseBlog(params).then(res => {
+      premark(params).then(res => {
+        let data = res.data
         if (res.status === 1) {
+          this.premarkStatus = data.premarkStatus
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
-          this.detailBlog()
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
         }
@@ -124,7 +134,56 @@ export default {
         this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
       })
     },
-    collectClick () {},
+    praiseClick () {
+      let userStatus = sessionStorage.getItem('userStatus')
+      if (userStatus === '1') {
+        let { userName, praiseStatus, praiseId } = this
+        let params = {
+          blogId: this.$route.query.blogId,
+          userName,
+          praiseStatus,
+          praiseId
+        }
+        praiseBlog(params).then(res => {
+          if (res.status === 1) {
+            this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+            this.detailBlog()
+            this.praiseStatus = 0
+          } else {
+            this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+          }
+        }).catch(res => {
+          this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+        })
+      } else {
+        this.setLoginDialog(true)
+      }
+    },
+    collectClick () {
+      let userStatus = sessionStorage.getItem('userStatus')
+      if (userStatus === '1') {
+        let { userName, collectStatus, collectId } = this
+        let params = {
+          blogId: this.$route.query.blogId,
+          userName,
+          collectStatus,
+          collectId
+        }
+        collectBlog(params).then(res => {
+          if (res.status === 1) {
+            this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+            this.detailBlog()
+            this.collectStatus = 0
+          } else {
+            this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+          }
+        }).catch(res => {
+          this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+        })
+      } else {
+        this.setLoginDialog(true)
+      }
+    },
     getUserInfoC () {
       getUserInfoC()
         .then(res => {
@@ -154,8 +213,22 @@ export default {
             this.avatar = data.avatar
             this.remarkList = data.remarkList
             this.count = data.remarkList.length
-            this.praiseNum = data.praiseNum
-            this.collectNum = data.collectNum
+            this.praiseNum = data.praiseList.length
+            this.collectNum = data.collectList.length
+            let praiseNowList = data.praiseList.filter(item => {
+              return item.userName === this.userName
+            })
+            if (praiseNowList.length > 0) {
+              this.praiseId = praiseNowList[0]._id
+              this.praiseStatus = 1
+            }
+            let collectNowList = data.collectList.filter(item => {
+              return item.userName === this.userName
+            })
+            if (collectNowList.length > 0) {
+              this.collectId = collectNowList[0]._id
+              this.collectStatus = 1
+            }
           } else {
             this.$notify({ title: res.msg, type: 'error', duration: 1000 })
           }
@@ -213,6 +286,13 @@ export default {
           })
       } else {
         this.setLoginDialog(true)
+      }
+    }
+  },
+  watch: {
+    userName (curVal, oldVal) {
+      if (curVal !== oldVal) {
+        this.detailBlog()
       }
     }
   }
@@ -274,8 +354,12 @@ export default {
     .item {
       margin-top: 15px;
       display: flex;
+      border-top: 1px solid rgba(0,0,0,0.09);
+      padding: 15px 0 0 0;
       &:first-child{
         margin-top: 0;
+        padding-top: 0;
+        border-top: none;
       }
       img {
         width: 32px;
@@ -288,6 +372,24 @@ export default {
         text-align: left;
         .mid{
           margin-top: 10px;
+        }
+        .foot{
+          margin-top: 10px;
+          span{
+            color: #999;
+            font-size: 13px;
+            cursor: pointer;
+            i{
+              margin-right: 5px;
+              &.active{
+                color: #449d44;
+              }
+            }
+            margin-right: 15px;
+            &:first-child:hover{
+              color: #009a61;
+            }
+          }
         }
       }
       .time{

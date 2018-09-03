@@ -116,6 +116,7 @@ export default {
             this.$notify({ title: res.msg, type: 'success', duration: 1000 })
             sessionStorage.clear()
             this.moveToken = ''
+            window.location.reload()
           } else {
             this.$notify({ title: res.msg, type: 'error', duration: 1000 })
           }
