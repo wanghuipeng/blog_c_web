@@ -14,6 +14,18 @@
           <span class="yuan">原</span><span class="label pointer" v-for="(item,index) in types" :key="index" v-if="detail.type === item.value" @click="link(item.value)">{{item.label}}</span>
        </div>
        <div class="cont">{{detail.content}}</div>
+       <div class="praise-collect">
+         <p class="praise" @click="praiseClick">
+           <span v-if="praiseNum > 0">已赞</span>
+           <span v-else>赞</span>
+           <span>{{praiseNum}}</span>
+         </p>
+         <p class="collect" @click="collectClick">
+           <span v-if="collectNum > 0">已收藏</span>
+           <span v-else>收藏</span>
+           <span>{{collectNum}}0</span>
+         </p>
+       </div>
        <div class="remak">
          <p class="remark-title">{{count}} 条评论</p>
          <ul class="remark-list" v-if="remarkList.length > 0">
@@ -37,7 +49,7 @@
 </template>
 
 <script>
-import { detailBlog, addMark, getUserInfoC } from '@/assets/js/api.js'
+import { detailBlog, addMark, getUserInfoC, praiseBlog } from '@/assets/js/api.js'
 import { mapState, mapMutations } from 'vuex'
 import { formatDate } from '@/assets/js/common.js'
 
@@ -76,7 +88,9 @@ export default {
       ],
       remarkText: '',
       count: 0,
-      remarkList: []
+      remarkList: [],
+      praiseNum: null,
+      collectNum: null
     }
   },
   created () {
@@ -93,6 +107,24 @@ export default {
       'setUserName',
       'setAccount'
     ]),
+    praiseClick () {
+      let { userName } = this
+      let params = {
+        blogId: this.$route.query.blogId,
+        userName
+      }
+      praiseBlog(params).then(res => {
+        if (res.status === 1) {
+          this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+          this.detailBlog()
+        } else {
+          this.$notify({ title: res.msg, type: 'error', duration: 1000 })
+        }
+      }).catch(res => {
+        this.$notify({ title: '服务器异常', type: 'error', duration: 1000 })
+      })
+    },
+    collectClick () {},
     getUserInfoC () {
       getUserInfoC()
         .then(res => {
@@ -121,7 +153,9 @@ export default {
             this.detail = data
             this.avatar = data.avatar
             this.remarkList = data.remarkList
-            this.count = data.remarkNum
+            this.count = data.remarkList.length
+            this.praiseNum = data.praiseNum
+            this.collectNum = data.collectNum
           } else {
             this.$notify({ title: res.msg, type: 'error', duration: 1000 })
           }
@@ -189,6 +223,51 @@ export default {
 .detail {
   width: 850px;
   margin: 0 auto;
+  .praise-collect{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    align-items: center;
+    width: 440px;
+    margin: 0 auto;
+    p{
+      cursor: pointer;
+      min-width: 100px;
+      margin: 10px;
+      padding: 8px 15px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+      font-size: 18px;
+      &.praise{
+        color: #fff;
+        background-color: #449d44;
+        border-color: #398439;
+        span{
+          padding: 0 5px;
+        }
+        span:last-child{
+          border-left: 1px solid rgba(255,255,255,0.2);
+          padding-left: 10px;
+          padding-right: 0;
+        }
+      }
+      &.collect{
+        color: #333;
+        background-color: #e6e6e6;
+        border-color: #adadad;
+        span{
+          padding: 0 5px;
+        }
+        span:last-child{
+          border-left: 1px solid rgba(0,0,0,0.1);
+          padding-left: 10px;
+          padding-right: 0;
+        }
+      }
+    }
+  }
   .remark-list {
     border-top: 1px solid rgba(0, 0, 0, 0.09);
     padding: 15px 0;

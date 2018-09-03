@@ -158,3 +158,8 @@ export const logoutC = params => {
 export const addMark = params => {
     return getAxios('post', '/api/addMark', params).then(res => res.data)
 }
+
+// 点赞文章
+export const praiseBlog = params => {
+    return getAxios('post', '/api/praiseBlog', params).then(res => res.data)
+}
