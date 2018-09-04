@@ -117,10 +117,11 @@ export default {
       'setAccount'
     ]),
     praiseRemark (remarkId) {
-      let { premarkStatus } = this
+      let { premarkStatus, userName } = this
       let params = {
         remarkId,
-        premarkStatus
+        premarkStatus,
+        userName
       }
       premark(params).then(res => {
         let data = res.data
