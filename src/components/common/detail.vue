@@ -35,7 +35,8 @@
                <p class="top"><strong class="green">{{item.name}}</strong><span class="time">{{item.time | formatDate}}</span></p>
                <p class="mid">{{item.markContent}}</p>
                <p class="foot">
-                 <span @click="praiseRemark(item._id)"><i :class="item.premarkStatus ? 'fa fa-thumbs-up active' : 'fa fa-thumbs-up'"></i>赞</span>
+                 <span v-if="item.praiseRemarkList && item.praiseRemarkList.length > 0" @click="praiseRemark(item._id)" class="active"><i class="fa fa-thumbs-up"></i>赞 +{{item.praiseRemarkList.length}}</span>
+                 <span v-else @click="praiseRemark(item._id)"><i class="fa fa-thumbs-up"></i>赞</span>
                  <span>回复</span>
                </p>
              </div>
@@ -128,6 +129,8 @@ export default {
         if (res.status === 1) {
           this.premarkStatus = data.premarkStatus
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
+          this.detailBlog()
+          this.premarkStatus = 0
         } else {
           this.$notify({ title: res.msg, type: 'error', duration: 1000 })
         }
@@ -382,7 +385,10 @@ export default {
             cursor: pointer;
             i{
               margin-right: 5px;
-              &.active{
+            }
+            &.active {
+              color: #449d44;
+              i{
                 color: #449d44;
               }
             }
