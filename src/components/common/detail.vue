@@ -105,7 +105,7 @@ export default {
   },
   created () {
     this.detailBlog()
-    let userStatus = sessionStorage.getItem('userStatus')
+    let userStatus = localStorage.getItem('userStatus')
     if (userStatus === '1') {
       this.getUserInfoC()
     }
@@ -139,7 +139,7 @@ export default {
       })
     },
     praiseClick () {
-      let userStatus = sessionStorage.getItem('userStatus')
+      let userStatus = localStorage.getItem('userStatus')
       if (userStatus === '1') {
         let { userName, praiseStatus, praiseId } = this
         let params = {
@@ -164,7 +164,7 @@ export default {
       }
     },
     collectClick () {
-      let userStatus = sessionStorage.getItem('userStatus')
+      let userStatus = localStorage.getItem('userStatus')
       if (userStatus === '1') {
         let { userName, collectStatus, collectId } = this
         let params = {
@@ -193,8 +193,8 @@ export default {
         .then(res => {
           let data = res.data
           if (res.status === 1) {
-            sessionStorage.setItem('userStatus', data.userStatus)
-            this.moveToken = sessionStorage.getItem('token')
+            localStorage.setItem('userStatus', data.userStatus)
+            this.moveToken = localStorage.getItem('token')
             this.setUserName(data.userName)
             this.setAccount(data.account)
           } else {
@@ -261,7 +261,7 @@ export default {
       this.$router.push({ name, query: { typeId: id } })
     },
     remarkBtn () {
-      let userStatus = sessionStorage.getItem('userStatus')
+      let userStatus = localStorage.getItem('userStatus')
       if (userStatus === '1') {
         let id = this.$route.query.blogId
         let { userName, account, remarkText: markContent } = this

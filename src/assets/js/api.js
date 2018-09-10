@@ -10,7 +10,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
     // let baseURL = "http://192.168.1.124:1030";
 axios.interceptors.request.use(function(request) {
     // 判断本地是否有token值，有则从新设置token，没有使用token默认配置
-    let moveToken = sessionStorage.getItem('token')
+    let moveToken = localStorage.getItem('token')
     if (moveToken) {
         request.headers.Authorization = `${moveToken}`
     };

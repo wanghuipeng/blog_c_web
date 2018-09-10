@@ -100,7 +100,7 @@ export default {
     }
   },
   created () {
-    this.moveToken = sessionStorage.getItem('token')
+    this.moveToken = localStorage.getItem('token')
   },
   methods: {
     ...mapMutations([
@@ -114,7 +114,7 @@ export default {
         await logoutC().then(res => {
           if (res.status === 1) {
             this.$notify({ title: res.msg, type: 'success', duration: 1000 })
-            sessionStorage.clear()
+            localStorage.clear()
             this.moveToken = ''
             window.location.reload()
           } else {
@@ -129,8 +129,8 @@ export default {
       await getUserInfoC().then(res => {
         let data = res.data
         if (res.status === 1) {
-          sessionStorage.setItem('userStatus', data.userStatus)
-          this.moveToken = sessionStorage.getItem('token')
+          localStorage.setItem('userStatus', data.userStatus)
+          this.moveToken = localStorage.getItem('token')
           this.setUserName(data.userName)
           this.setAccount(data.account)
         } else {
@@ -209,7 +209,7 @@ export default {
       }
       loginC(params).then(res => {
         if (res.status === 1) {
-          sessionStorage.setItem('token', res.token)
+          localStorage.setItem('token', res.token)
 
           this.$notify({ title: res.msg, type: 'success', duration: 1000 })
           this.setLoginDialog(false)

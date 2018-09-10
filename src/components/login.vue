@@ -64,9 +64,9 @@ export default {
             if (res.status === 200 && res.data.errNum === 0) {
               let token = data.access_token
               let user = data.user_info
-              sessionStorage.setItem('user', JSON.stringify(user))
-              sessionStorage.setItem('token', token)
-              sessionStorage.setItem('user', JSON.stringify(user)) // 获取用户信息
+              localStorage.setItem('user', JSON.stringify(user))
+              localStorage.setItem('token', token)
+              localStorage.setItem('user', JSON.stringify(user)) // 获取用户信息
               avatarMenu({systemName: 'avatar'}).then(res => {
                 let menuBack = ['busiList', 'orderList', 'costList', 'allotLog', 'statement', 'firstBarList']
                 let menuFront = ['busiHallFront', 'orderListFront']
@@ -79,23 +79,23 @@ export default {
                   if (res.data.includes('AvatarBackstage') && res.data.length === 1) {
                     console.log('后台')
                     this.$notify({title: '登录成功', type: 'success', duration: 1000})
-                    sessionStorage.setItem('menu', JSON.stringify(menuBack))
+                    localStorage.setItem('menu', JSON.stringify(menuBack))
                     this.$router.push({name: menuBack[0]})
                   } else if (res.data.includes('AvatarFront') && res.data.length === 1) {
                     console.log('前台')
                     this.$notify({title: '登录成功', type: 'success', duration: 1000})
-                    sessionStorage.setItem('menu', JSON.stringify(menuFront))
+                    localStorage.setItem('menu', JSON.stringify(menuFront))
                     this.$router.push({name: menuFront[0]})
                   } else if (JSON.stringify(res.data.sort()) === JSON.stringify(['AvatarBackstage', 'AvatarFront'])) {
                     console.log('所有权限')
                     this.$notify({title: '登录成功', type: 'success', duration: 1000})
-                    sessionStorage.setItem('menu', JSON.stringify(menuAll))
+                    localStorage.setItem('menu', JSON.stringify(menuAll))
                     this.$router.push({name: menuBack[0]})
                   }
                 }
-                let initIndex = sessionStorage.getItem('menuIndex')
+                let initIndex = localStorage.getItem('menuIndex')
                 if (!initIndex) {
-                  sessionStorage.setItem('menuIndex', JSON.stringify({menuIndex1: 0})) // 菜单第一项默认激活
+                  localStorage.setItem('menuIndex', JSON.stringify({menuIndex1: 0})) // 菜单第一项默认激活
                 }
               })
             } else {

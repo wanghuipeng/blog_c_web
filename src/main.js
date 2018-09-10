@@ -36,16 +36,16 @@ Vue.directive('dbClick', {
 // 本地没有user值，重定位到登录页
 // router.beforeEach((to, from, next) => {
 //     if (to.path === '/login') {
-//         sessionStorage.clear()
+//         localStorage.clear()
 //     }
-//     let user = JSON.parse(sessionStorage.getItem('user'))
+//     let user = JSON.parse(localStorage.getItem('user'))
 //     if (!user && to.path !== '/login') {
 //         next({ path: '/login' })
 //     } else {
 //         next()
 //     }
 //     // 该账号的菜单项中无此路由名称时跳转至404页面
-//     let menu = JSON.parse(sessionStorage.getItem('menu'))
+//     let menu = JSON.parse(localStorage.getItem('menu'))
 //     if (menu && Object.values(menu).indexOf(to.path.substring(1)) === -1) {
 //         next({ path: '/notFound' })
 //     } else {
